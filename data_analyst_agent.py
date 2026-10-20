@@ -5,10 +5,10 @@ import io
 
 import pandas as pd
 import matplotlib
-matplotlib.use("Agg")  # CHANGE 7: Codespaces has no screen, so charts are saved as PNG files
+matplotlib.use("Agg")  # Codespaces has no screen, so charts are saved as PNG files
 import matplotlib.pyplot as plt
-from dotenv import load_dotenv  # CHANGE 1: reads a local .env file if there is one
-from groq import Groq, APIError, RateLimitError  # CHANGE 1: Groq client replaces requests/openai
+from dotenv import load_dotenv  
+from groq import Groq, APIError, RateLimitError  
 
 load_dotenv()
 
@@ -19,10 +19,9 @@ class DataAnalystAgent:
     """
 
     def __init__(self,
-                 model: str = "llama-3.3-70b-versatile",  # CHANGE 2: a real Groq model ID
+                 model: str = "llama-3.3-70b-versatile",  
                  max_history: int = 10):
 
-        # CHANGE 2: create the Groq client once, using the key from the Codespaces secret
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise RuntimeError(
@@ -38,7 +37,6 @@ class DataAnalystAgent:
         self.chart_count = 0
 
          # تعليمات الوكيل المتخصصة في تحليل البيانات
-        # CHANGE 6: tell the model the DataFrame is called df and to store the answer in result
         self.system_prompt = """
         أنت وكيل ذكاء اصطناعي متخصص في تحليل البيانات.
         مهامك هي:
@@ -55,7 +53,7 @@ class DataAnalystAgent:
     def load_data(self, source, file_type: str):
         """تحميل البيانات من ملف"""
         try:
-            # CHANGE 5: accept a URL or a file path as well as raw bytes
+            # accept a URL or a file path as well as raw bytes
             if isinstance(source, bytes):
                 source = io.BytesIO(source)
             elif isinstance(source, str) and "github.com" in source and "/blob/" in source:
@@ -87,7 +85,6 @@ class DataAnalystAgent:
 
     def get_context(self) -> list:
         """بناء السياق من السجل"""
-        # CHANGE 3: Groq's chat API takes a list of messages with roles, not one long string
         system = self.system_prompt
         # لو في داتا محملة بيضيف معلوماتها للسياق
         if self.df_info:
@@ -115,14 +112,13 @@ class DataAnalystAgent:
             local_vars = {"df": self.df, "pd": pd, "plt": plt}
             exec(code, local_vars)
 
-            # CHANGE 7: if the code drew a chart, save it so you can open it in Codespaces
+            # the code drew a chart, save it so we can open it in Codespaces
             if plt.get_fignums():
                 self.chart_count += 1
                 chart_file = f"chart_{self.chart_count}.png"
                 plt.savefig(chart_file, bbox_inches="tight")
                 response += f"\n\nتم حفظ الرسم في {chart_file}"
 
-            # لو في نتيجة يرجعها
             if "result" in local_vars:
                 return f"{response}\n\nالنتيجة:\n{local_vars['result']}"
 
@@ -157,8 +153,6 @@ class DataAnalystAgent:
         إرسال الطلب للموديل
         التمبريتشر 0.3 عشان الردود تكون دقيقة مش عشوائية
         """
-        # CHANGE 4: call Groq instead of Ollama's /api/generate.
-        # chat() already added the user's prompt to history, so get_context() includes it.
         try:
             completion = self.client.chat.completions.create(
                 model=self.model,
@@ -194,7 +188,7 @@ if __name__ == "__main__":
 
     agent = DataAnalystAgent()
     url = "https://github.com/ayaelsadek/Agentic-AI_Deeplearning/blob/main/train.csv"
-    print(agent.load_data(url, "csv"))  # CHANGE 5: print it so you see if loading failed
+    print(agent.load_data(url, "csv"))  
 
     questions = [
         "كام صف فاضي في الداتا؟",
