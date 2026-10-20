@@ -1,5 +1,5 @@
 groq
-python-dotenv
-pandas
 matplotlib
 openpyxl
+pandas
+python-dotenv

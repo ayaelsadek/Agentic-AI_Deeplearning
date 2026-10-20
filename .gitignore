@@ -1,0 +1,5 @@
+
+# agent outputs and secrets
+analysis_session.json
+chart_*.png
+.env
