@@ -19,7 +19,7 @@ class DataAnalystAgent:
     """
 
     def __init__(self,
-                 model: str = "llama-3.3-70b-versatile",  
+                 model: str = "openai/gpt-oss-120b",  
                  max_history: int = 10):
 
         api_key = os.getenv("GROQ_API_KEY")
